@@ -1,0 +1,12 @@
+[Interface]
+Address    = 10.10.0.1/24
+ListenPort = 51821
+PrivateKey = <server_private_key>
+
+# NAT rule is injected by entrypoint; no PostUp needed.
+
+[Peer]                      # mobile Pi
+PublicKey  = <pi_public_key>
+AllowedIPs = 10.10.0.2/32
+PersistentKeepalive = 25
+
