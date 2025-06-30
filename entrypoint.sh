@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CFG_DIR=/etc/home-wg           # holds wg0.conf + keys
-LAN_IFACE=${LAN_IFACE:-eth0}   # allow override
+CFG_DIR=/etc/home-wg
+CONF="${CFG_DIR}/wg0.conf"
+LAN_IFACE=${LAN_IFACE:-eth0}
 
-# ---------- 1  kernel tweaks ----------
+chmod 600 "${CONF}" 2>/dev/null || true
 sysctl -w net.ipv4.ip_forward=1
 
-# ---------- 2  start WireGuard ----------
-wg-quick up "${CFG_DIR}/wg0.conf"
+# --- stop any stale interface using the SAME conf file ------------
+if ip link show wg0 &>/dev/null ; then
+  echo "[INFO] wg0 already present – removing stale interface"
+  wg-quick down "${CONF}" || ip link delete wg0 || true
+fi
+
+# --- bring it back up --------------------------------------------
+wg-quick up "${CONF}"
 
 # ---------- 3  NAT VPN → apartment LAN ----------
 iptables -t nat -C POSTROUTING -s 10.10.0.0/24 -o "${LAN_IFACE}" -j MASQUERADE 2>/dev/null \
@@ -22,5 +29,5 @@ chmod 644 /etc/cron.d/duckdns
 cron
 
 # ---------- 5  foreground logs ----------
-exec tail -f /var/log/syslog
+exec tail -f /dev/null
 

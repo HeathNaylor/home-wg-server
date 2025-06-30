@@ -1,9 +1,6 @@
-version: "3.9"
-
 services:
   homewg:
     build: .
-    image: YOUR_DOCKERHUB/home-wg-server:latest
     network_mode: host
     privileged: true
     cap_add:
@@ -12,7 +9,7 @@ services:
     devices:
       - /dev/net/tun
     environment:
-      - DUCKDNS_DOMAIN=denvpn
+      - DUCKDNS_DOMAIN=${DUCKDNS_DOMAIN}
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
       # optional:
       # - LAN_IFACE=eth0
