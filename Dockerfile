@@ -2,7 +2,7 @@ FROM debian:bookworm-backports
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update &&     apt-get install -y --no-install-recommends     wireguard iproute2 iptables curl cron procps zstd &&     apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update &&     apt-get install -y --no-install-recommends     wireguard-tools iproute2 iptables curl cron procps zstd &&     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /usr/local/bin/
 COPY configs/ /etc/home-wg/
